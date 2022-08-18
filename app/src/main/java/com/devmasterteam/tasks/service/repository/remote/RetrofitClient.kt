@@ -25,5 +25,10 @@ class RetrofitClient private constructor() {
             }
             return INSTANCE
         }
+
+        //metodo generico para chamar qualquer serviço
+        fun <S> getervice(serviceClass: Class<S>): S {
+            return getRetrofitInstance().create(serviceClass)
+        }
     }
 }
