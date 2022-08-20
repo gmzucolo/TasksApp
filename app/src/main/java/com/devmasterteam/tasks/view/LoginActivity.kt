@@ -29,6 +29,8 @@ class LoginActivity : AppCompatActivity(), View.OnClickListener {
         binding.buttonLogin.setOnClickListener(this)
         binding.textRegister.setOnClickListener(this)
 
+        viewModel.verifyLoggedUser()
+
         // Observadores
         observe()
     }
@@ -54,6 +56,13 @@ class LoginActivity : AppCompatActivity(), View.OnClickListener {
                 finish()
             } else {
                 Toast.makeText(applicationContext, it.message(), Toast.LENGTH_LONG).show()
+            }
+        }
+        // A Activity vai observar a viewmodel e se o loggedUser for != "" o valor atribuido é true (representa que o usuario possui personKey e token) e ele loga
+        viewModel.loggedUser.observe(this) {
+            if (it) {
+                startActivity(Intent(applicationContext, MainActivity::class.java))
+                finish()
             }
         }
     }
