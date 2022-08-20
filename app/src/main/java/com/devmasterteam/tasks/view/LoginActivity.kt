@@ -41,7 +41,7 @@ class LoginActivity : AppCompatActivity(), View.OnClickListener {
         val email = binding.editEmail.text.toString()
         val password = binding.editPassword.text.toString()
 
-        viewModel.login(email, password)
+        viewModel.doLogin(email, password)
     }
 
     private fun observe() {
