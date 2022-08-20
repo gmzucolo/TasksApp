@@ -7,8 +7,10 @@ import androidx.lifecycle.MutableLiveData
 import com.devmasterteam.tasks.service.constants.TaskConstants
 import com.devmasterteam.tasks.service.listener.ApiListener
 import com.devmasterteam.tasks.service.model.PersonModel
+import com.devmasterteam.tasks.service.model.PriorityModel
 import com.devmasterteam.tasks.service.model.ValidationModel
 import com.devmasterteam.tasks.service.repository.PersonRepository
+import com.devmasterteam.tasks.service.repository.PriorityRepository
 import com.devmasterteam.tasks.service.repository.SecurityPreferences
 import com.devmasterteam.tasks.service.repository.remote.RetrofitClient
 
@@ -16,6 +18,10 @@ class LoginViewModel(application: Application) : AndroidViewModel(application) {
 
     private val personRepository: PersonRepository =
         PersonRepository(application.applicationContext)
+
+    private val priorityRepository: PriorityRepository =
+        PriorityRepository(application.applicationContext)
+
     private val securityPreferences: SecurityPreferences =
         SecurityPreferences(application.applicationContext)
 
@@ -59,10 +65,22 @@ class LoginViewModel(application: Application) : AndroidViewModel(application) {
 
         RetrofitClient.addHeaders(person, token)
 
+        val logged = (person != "" && token != "")
+        _loggedUser.value = logged
 
-        if (person != "" && token != "") {
-            _loggedUser.value = true
+        if (!logged) {
+            priorityRepository.list(object : ApiListener<List<PriorityModel>> {
+                override fun onSuccess(result: List<PriorityModel>) {
+                    val s = ""
+                }
+
+                override fun onFailure(message: String) {
+                    TODO("Not yet implemented")
+                }
+
+            })
         }
+
     }
 
 }
