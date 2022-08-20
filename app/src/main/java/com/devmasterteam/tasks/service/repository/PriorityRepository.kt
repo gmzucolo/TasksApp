@@ -5,6 +5,7 @@ import com.devmasterteam.tasks.R
 import com.devmasterteam.tasks.service.constants.TaskConstants
 import com.devmasterteam.tasks.service.listener.ApiListener
 import com.devmasterteam.tasks.service.model.PriorityModel
+import com.devmasterteam.tasks.service.repository.local.TaskDatabase
 import com.devmasterteam.tasks.service.repository.remote.PriorityService
 import com.devmasterteam.tasks.service.repository.remote.RetrofitClient
 import com.google.gson.Gson
@@ -16,6 +17,8 @@ class PriorityRepository(val context: Context) {
 
     private val priorityRemoteService: PriorityService =
         RetrofitClient.getervice(PriorityService::class.java)
+
+    private val priorityDatabase = TaskDatabase.getDatabase(context).priorityDAO()
 
     fun list(listener: ApiListener<List<PriorityModel>>) {
         val call = priorityRemoteService.list()
@@ -36,6 +39,11 @@ class PriorityRepository(val context: Context) {
             }
 
         })
+    }
+
+    fun save(list: List<PriorityModel>) {
+        priorityDatabase.clear()
+        priorityDatabase.save(list)
     }
 
     private fun failResponse(string: String): String {
