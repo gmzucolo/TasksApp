@@ -4,14 +4,20 @@ import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import com.devmasterteam.tasks.service.constants.TaskConstants
 import com.devmasterteam.tasks.service.listener.ApiListener
 import com.devmasterteam.tasks.service.model.PersonModel
 import com.devmasterteam.tasks.service.model.ValidationModel
 import com.devmasterteam.tasks.service.repository.PersonRepository
+import com.devmasterteam.tasks.service.repository.SecurityPreferences
+import com.devmasterteam.tasks.service.repository.remote.RetrofitClient
 
 class LoginViewModel(application: Application) : AndroidViewModel(application) {
 
-    private val personRepository: PersonRepository = PersonRepository(application.applicationContext)
+    private val personRepository: PersonRepository =
+        PersonRepository(application.applicationContext)
+    private val securityPreferences: SecurityPreferences =
+        SecurityPreferences(application.applicationContext)
 
     private val _login = MutableLiveData<ValidationModel>()
     val login: LiveData<ValidationModel> = _login
@@ -20,8 +26,16 @@ class LoginViewModel(application: Application) : AndroidViewModel(application) {
      * Faz login usando API
      */
     fun doLogin(email: String, password: String) {
-        personRepository.login(email, password, object : ApiListener<PersonModel>{
+        personRepository.login(email, password, object : ApiListener<PersonModel> {
             override fun onSuccess(result: PersonModel) {
+                // Salva os dados que vêm do header (autenticação) no SharedPreference
+                securityPreferences.store(TaskConstants.SHARED.PERSON_KEY, result.personKey)
+                securityPreferences.store(TaskConstants.SHARED.PERSON_NAME, result.name)
+                securityPreferences.store(TaskConstants.SHARED.TOKEN_KEY, result.token)
+
+                // Adiciona os dados salvos do SharedPreference nos headers
+                RetrofitClient.addHeaders(result.personKey, result.token)
+
                 _login.value = ValidationModel()
             }
 
