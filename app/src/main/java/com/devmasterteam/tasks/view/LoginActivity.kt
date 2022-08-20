@@ -1,8 +1,10 @@
 package com.devmasterteam.tasks.view
 
-import androidx.appcompat.app.AppCompatActivity
+import android.content.Intent
 import android.os.Bundle
 import android.view.View
+import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import com.devmasterteam.tasks.R
 import com.devmasterteam.tasks.databinding.ActivityLoginBinding
@@ -45,5 +47,14 @@ class LoginActivity : AppCompatActivity(), View.OnClickListener {
     }
 
     private fun observe() {
+        // A Activity vai observar a viewmodel onSuccess e onFailure com o login atribuido e receber um objeto ValidationModel
+        viewModel.login.observe(this) {
+            if (it.status()) {
+                startActivity(Intent(applicationContext, MainActivity::class.java))
+                finish()
+            } else {
+                Toast.makeText(applicationContext, it.message(), Toast.LENGTH_LONG).show()
+            }
+        }
     }
 }
