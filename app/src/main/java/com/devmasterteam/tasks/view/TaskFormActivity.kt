@@ -9,6 +9,8 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import com.devmasterteam.tasks.R
 import com.devmasterteam.tasks.databinding.ActivityTaskFormBinding
+import com.devmasterteam.tasks.service.model.PriorityModel
+import com.devmasterteam.tasks.service.model.TaskModel
 import com.devmasterteam.tasks.viewmodel.TaskFormViewModel
 import java.text.SimpleDateFormat
 import java.util.*
@@ -19,6 +21,7 @@ class TaskFormActivity : AppCompatActivity(), View.OnClickListener,
     private lateinit var viewModel: TaskFormViewModel
     private lateinit var binding: ActivityTaskFormBinding
     private val dateFormart: SimpleDateFormat = SimpleDateFormat("dd/MM/yyyy")
+    private var listPriority: List<PriorityModel> = listOf()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -41,6 +44,7 @@ class TaskFormActivity : AppCompatActivity(), View.OnClickListener,
 
     private fun observe() {
         viewModel.priorityList.observe(this) {
+            listPriority = it
             // Spinner
             val list = mutableListOf<String>()
             for (priority in it) {
@@ -65,6 +69,8 @@ class TaskFormActivity : AppCompatActivity(), View.OnClickListener,
     override fun onClick(v: View) {
         if (v.id == R.id.button_date) {
             handleDate()
+        } else if (v.id == R.id.button_save) {
+            handleSave()
         }
     }
 
@@ -74,5 +80,19 @@ class TaskFormActivity : AppCompatActivity(), View.OnClickListener,
         val month = calendar.get(Calendar.MONTH)
         val dayOfMonth = calendar.get(Calendar.DAY_OF_MONTH)
         DatePickerDialog(this, this, year, month, dayOfMonth).show()
+    }
+
+    private fun handleSave() {
+        val task = TaskModel().apply {
+            this.id = 0
+            this.description = binding.editDescription.text.toString()
+            this.dueData = binding.buttonDate.text.toString()
+            this.complete = binding.checkComplete.isChecked
+
+            val index = binding.spinnerPriority.selectedItemPosition
+            this.priorityId = listPriority[index].id
+        }
+
+        viewModel.save(task)
     }
 }
