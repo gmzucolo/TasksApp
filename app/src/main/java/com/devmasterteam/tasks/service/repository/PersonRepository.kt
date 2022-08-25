@@ -1,7 +1,6 @@
 package com.devmasterteam.tasks.service.repository
 
 import android.content.Context
-import com.devmasterteam.tasks.R
 import com.devmasterteam.tasks.service.listener.ApiListener
 import com.devmasterteam.tasks.service.model.PersonModel
 import com.devmasterteam.tasks.service.repository.remote.PersonService
@@ -20,11 +19,11 @@ class PersonRepository(val context: Context) : BaseRepository() {
         val call = personRemoteService.login(email, password)
         call.enqueue(object : Callback<PersonModel> {
             override fun onResponse(call: Call<PersonModel>, response: Response<PersonModel>) {
-                handleResponse(response, listener)
+                handleSuccessResponse(response, listener)
             }
 
             override fun onFailure(call: Call<PersonModel>, t: Throwable) {
-                listener.onFailure(context.getString(R.string.ERROR_UNEXPECTED))
+                handleFailureResponse(context, listener)
             }
 
         })

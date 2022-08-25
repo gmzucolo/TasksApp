@@ -1,8 +1,6 @@
 package com.devmasterteam.tasks.service.repository
 
 import android.content.Context
-import com.devmasterteam.tasks.R
-import com.devmasterteam.tasks.service.constants.TaskConstants
 import com.devmasterteam.tasks.service.listener.ApiListener
 import com.devmasterteam.tasks.service.model.TaskModel
 import com.devmasterteam.tasks.service.repository.remote.RetrofitClient
@@ -24,11 +22,11 @@ class TaskRepository(val context: Context) : BaseRepository() {
         )
         call.enqueue(object : Callback<Boolean> {
             override fun onResponse(call: Call<Boolean>, response: Response<Boolean>) {
-                handleResponse(response, listener)
+                handleSuccessResponse(response, listener)
             }
 
             override fun onFailure(call: Call<Boolean>, t: Throwable) {
-                listener.onFailure(context.getString(R.string.ERROR_UNEXPECTED))
+                handleFailureResponse(context, listener)
             }
 
         })
