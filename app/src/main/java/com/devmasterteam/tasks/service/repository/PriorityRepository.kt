@@ -17,6 +17,30 @@ class PriorityRepository(val context: Context) : BaseRepository() {
 
     private val priorityDatabase = TaskDatabase.getDatabase(context).priorityDAO()
 
+    companion object {
+        private val cache = mutableMapOf<Int, String>()
+        fun getDescription(id: Int): String {
+            return cache[id] ?: ""
+        }
+
+        fun setDescription(id: Int, string: String) {
+            cache[id] = string
+        }
+    }
+
+    fun getDescription(id: Int): String {
+        val cached = PriorityRepository.getDescription(id)
+        return if (cached == "") {
+            val description = priorityDatabase.getDescription(id)
+            PriorityRepository.setDescription(id, description)
+            description
+        } else {
+            cached
+        }
+    }
+
+    fun list(): List<PriorityModel> = priorityDatabase.list()
+
     fun list(listener: ApiListener<List<PriorityModel>>) {
         val call = priorityRemoteService.list()
         call.enqueue(object : Callback<List<PriorityModel>> {
@@ -33,8 +57,6 @@ class PriorityRepository(val context: Context) : BaseRepository() {
 
         })
     }
-
-    fun list(): List<PriorityModel> = priorityDatabase.list()
 
     fun save(list: List<PriorityModel>) {
         priorityDatabase.clear()

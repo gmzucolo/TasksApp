@@ -33,7 +33,7 @@ class TaskRepository(val context: Context) : BaseRepository() {
             taskModel.id,
             taskModel.priorityId,
             taskModel.description,
-            taskModel.dueData,
+            taskModel.dueDate,
             taskModel.complete
         )
         call.enqueue(object : Callback<Boolean> {
@@ -45,6 +45,22 @@ class TaskRepository(val context: Context) : BaseRepository() {
                 handleFailureResponse(context, listener)
             }
 
+        })
+    }
+
+    fun delete(id: Int, listener: ApiListener<Boolean>) {
+        val call = taskRemoteService.delete(id)
+        call.enqueue(object : Callback<Boolean> {
+            override fun onResponse(
+                call: Call<Boolean>,
+                response: Response<Boolean>
+            ) {
+                handleSuccessResponse(response, listener)
+            }
+
+            override fun onFailure(call: Call<Boolean>, t: Throwable) {
+                handleFailureResponse(context, listener)
+            }
         })
     }
 

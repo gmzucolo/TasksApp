@@ -10,7 +10,6 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import com.devmasterteam.tasks.R
 import com.devmasterteam.tasks.databinding.ActivityTaskFormBinding
-import com.devmasterteam.tasks.service.listener.ApiListener
 import com.devmasterteam.tasks.service.model.PriorityModel
 import com.devmasterteam.tasks.service.model.TaskModel
 import com.devmasterteam.tasks.viewmodel.TaskFormViewModel
@@ -102,22 +101,10 @@ class TaskFormActivity : AppCompatActivity(), View.OnClickListener,
             val index = binding.spinnerPriority.selectedItemPosition
             this.priorityId = listPriority[index].id
             this.description = binding.editDescription.text.toString()
-            this.dueData = binding.buttonDate.text.toString()
+            this.dueDate = binding.buttonDate.text.toString()
             this.complete = binding.checkComplete.isChecked
         }
 
         viewModel.save(task)
-    }
-
-    private fun list(listener: ApiListener<List<TaskModel>>) {
-        viewModel.list(listener)
-    }
-
-    private fun listNext(listener: ApiListener<List<TaskModel>>) {
-        viewModel.listNext(listener)
-    }
-
-    private fun listOverdue(listener: ApiListener<List<TaskModel>>) {
-        viewModel.listOverdue(listener)
     }
 }

@@ -26,18 +26,6 @@ class TaskFormViewModel(application: Application) : AndroidViewModel(application
         _priorityList.value = priorityRepository.list()
     }
 
-    fun list(listener: ApiListener<List<TaskModel>>) {
-        taskRepository.list(listener)
-    }
-
-    fun listNext(listener: ApiListener<List<TaskModel>>) {
-        taskRepository.listNext(listener)
-    }
-
-    fun listOverdue(listener: ApiListener<List<TaskModel>>) {
-        taskRepository.listOverdue(listener)
-    }
-
     fun save(taskModel: TaskModel) {
         taskRepository.create(taskModel, object: ApiListener<Boolean>{
             override fun onSuccess(result: Boolean) {
