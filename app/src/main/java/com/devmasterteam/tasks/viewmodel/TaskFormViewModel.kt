@@ -7,6 +7,7 @@ import androidx.lifecycle.MutableLiveData
 import com.devmasterteam.tasks.service.listener.ApiListener
 import com.devmasterteam.tasks.service.model.PriorityModel
 import com.devmasterteam.tasks.service.model.TaskModel
+import com.devmasterteam.tasks.service.model.ValidationModel
 import com.devmasterteam.tasks.service.repository.PriorityRepository
 import com.devmasterteam.tasks.service.repository.TaskRepository
 
@@ -18,18 +19,33 @@ class TaskFormViewModel(application: Application) : AndroidViewModel(application
     private val _priorityList = MutableLiveData<List<PriorityModel>>()
     val priorityList: LiveData<List<PriorityModel>> = _priorityList
 
+    private val _taskSave = MutableLiveData<ValidationModel>()
+    val taskSave: LiveData<ValidationModel> = _taskSave
+
     fun loadPriorities() {
         _priorityList.value = priorityRepository.list()
+    }
+
+    fun list(listener: ApiListener<List<TaskModel>>) {
+        taskRepository.list(listener)
+    }
+
+    fun listNext(listener: ApiListener<List<TaskModel>>) {
+        taskRepository.listNext(listener)
+    }
+
+    fun listOverdue(listener: ApiListener<List<TaskModel>>) {
+        taskRepository.listOverdue(listener)
     }
 
     fun save(taskModel: TaskModel) {
         taskRepository.create(taskModel, object: ApiListener<Boolean>{
             override fun onSuccess(result: Boolean) {
-                TODO("Not yet implemented")
+                _taskSave.value = ValidationModel()
             }
 
             override fun onFailure(message: String) {
-                TODO("Not yet implemented")
+                _taskSave.value = ValidationModel(message)
             }
 
         })
