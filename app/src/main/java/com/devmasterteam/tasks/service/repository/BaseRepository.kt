@@ -4,10 +4,12 @@ import android.content.Context
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
 import android.os.Build
+import android.widget.Toast
 import com.devmasterteam.tasks.R
 import com.devmasterteam.tasks.service.constants.TaskConstants
 import com.devmasterteam.tasks.service.listener.ApiListener
 import com.google.gson.Gson
+import com.google.gson.JsonSyntaxException
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -15,7 +17,12 @@ import retrofit2.Response
 open class BaseRepository(val context: Context) {
     // Pega o retorno Json e o converte para uma class String
     private fun failResponse(string: String): String {
-        return Gson().fromJson(string, String::class.java)
+        try {
+            val string = Gson().fromJson(string, String::class.java)
+        } catch (e: JsonSyntaxException) {
+            Toast.makeText(context, "Preencha corretamente os dados", Toast.LENGTH_SHORT).show()
+        }
+        return string
     }
 
     fun <T> handleSuccessResponse(response: Response<T>, listener: ApiListener<T>) {
