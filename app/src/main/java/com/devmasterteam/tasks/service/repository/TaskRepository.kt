@@ -36,6 +36,17 @@ class TaskRepository(context: Context) : BaseRepository(context) {
         executeCall(call, listener)
     }
 
+    fun update(taskModel: TaskModel, listener: ApiListener<Boolean>) {
+        val call = taskRemoteService.update(
+            taskModel.id,
+            taskModel.priorityId,
+            taskModel.description,
+            taskModel.dueDate,
+            taskModel.complete
+        )
+        executeCall(call, listener)
+    }
+
     fun delete(id: Int, listener: ApiListener<Boolean>) {
         val call = taskRemoteService.delete(id)
         executeCall(call, listener)
@@ -48,6 +59,11 @@ class TaskRepository(context: Context) : BaseRepository(context) {
 
     fun undo(id: Int, listener: ApiListener<Boolean>) {
         val call = taskRemoteService.undo(id)
+        executeCall(call, listener)
+    }
+
+    fun load(id: Int, listener: ApiListener<TaskModel>) {
+        val call = taskRemoteService.load(id)
         executeCall(call, listener)
     }
 }
