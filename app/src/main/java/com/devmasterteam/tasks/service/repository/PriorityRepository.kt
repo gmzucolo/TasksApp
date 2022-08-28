@@ -1,6 +1,7 @@
 package com.devmasterteam.tasks.service.repository
 
 import android.content.Context
+import com.devmasterteam.tasks.R
 import com.devmasterteam.tasks.service.listener.ApiListener
 import com.devmasterteam.tasks.service.model.PriorityModel
 import com.devmasterteam.tasks.service.repository.local.TaskDatabase
@@ -42,6 +43,12 @@ class PriorityRepository(context: Context) : BaseRepository(context) {
     fun list(): List<PriorityModel> = priorityDatabase.list()
 
     fun list(listener: ApiListener<List<PriorityModel>>) {
+
+        if (!isConnectionAvailable()) {
+            listener.onFailure(context.getString(R.string.ERROR_INTERNET_CONNECTION))
+            return
+        }
+
         val call = priorityRemoteService.list()
         executeCall(call, listener)
     }

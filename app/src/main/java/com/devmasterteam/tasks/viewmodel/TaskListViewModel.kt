@@ -34,7 +34,7 @@ class TaskListViewModel(application: Application) : AndroidViewModel(application
             }
 
             override fun onFailure(message: String) {
-                TODO("Not yet implemented")
+                _status.value = ValidationModel(message)
             }
 
         })
