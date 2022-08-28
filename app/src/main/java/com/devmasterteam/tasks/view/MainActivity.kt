@@ -2,6 +2,7 @@ package com.devmasterteam.tasks.view
 
 import android.content.Intent
 import android.os.Bundle
+import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
@@ -35,6 +36,8 @@ class MainActivity : AppCompatActivity() {
 
         // Navegação
         setupNavigation()
+
+        viewModel.loadUserName()
 
         // Observadores
         observe()
@@ -74,6 +77,9 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun observe() {
-
+        viewModel.userName.observe(this) {
+            val header = binding.navView.getHeaderView(0)
+            header.findViewById<TextView>(R.id.text_name).text = it
+        }
     }
 }
