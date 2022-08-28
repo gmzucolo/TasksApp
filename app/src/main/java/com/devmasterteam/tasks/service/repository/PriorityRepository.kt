@@ -10,7 +10,7 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
-class PriorityRepository(val context: Context) : BaseRepository() {
+class PriorityRepository(context: Context) : BaseRepository(context) {
 
     private val priorityRemoteService: PriorityService =
         RetrofitClient.getervice(PriorityService::class.java)
@@ -43,19 +43,7 @@ class PriorityRepository(val context: Context) : BaseRepository() {
 
     fun list(listener: ApiListener<List<PriorityModel>>) {
         val call = priorityRemoteService.list()
-        call.enqueue(object : Callback<List<PriorityModel>> {
-            override fun onResponse(
-                call: Call<List<PriorityModel>>,
-                response: Response<List<PriorityModel>>
-            ) {
-                handleSuccessResponse(response, listener)
-            }
-
-            override fun onFailure(call: Call<List<PriorityModel>>, t: Throwable) {
-                handleFailureResponse(context, listener)
-            }
-
-        })
+        executeCall(call, listener)
     }
 
     fun save(list: List<PriorityModel>) {

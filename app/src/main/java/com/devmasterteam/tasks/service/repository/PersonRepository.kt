@@ -9,7 +9,7 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
-class PersonRepository(val context: Context) : BaseRepository() {
+class PersonRepository(context: Context) : BaseRepository(context) {
 
     // Instancia o retrofit
     private val personRemoteService: PersonService =
@@ -17,15 +17,6 @@ class PersonRepository(val context: Context) : BaseRepository() {
 
     fun login(email: String, password: String, listener: ApiListener<PersonModel>) {
         val call = personRemoteService.login(email, password)
-        call.enqueue(object : Callback<PersonModel> {
-            override fun onResponse(call: Call<PersonModel>, response: Response<PersonModel>) {
-                handleSuccessResponse(response, listener)
-            }
-
-            override fun onFailure(call: Call<PersonModel>, t: Throwable) {
-                handleFailureResponse(context, listener)
-            }
-
-        })
+        executeCall(call, listener)
     }
 }

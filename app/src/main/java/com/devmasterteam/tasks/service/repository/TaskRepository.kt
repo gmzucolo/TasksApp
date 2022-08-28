@@ -5,27 +5,24 @@ import com.devmasterteam.tasks.service.listener.ApiListener
 import com.devmasterteam.tasks.service.model.TaskModel
 import com.devmasterteam.tasks.service.repository.remote.RetrofitClient
 import com.devmasterteam.tasks.service.repository.remote.TaskService
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
 
-class TaskRepository(val context: Context) : BaseRepository() {
+class TaskRepository(context: Context) : BaseRepository(context) {
 
     private val taskRemoteService = RetrofitClient.getervice(TaskService::class.java)
 
     fun list(listener: ApiListener<List<TaskModel>>) {
         val call = taskRemoteService.list()
-        listCall(call, listener)
+        executeCall(call, listener)
     }
 
     fun listNext(listener: ApiListener<List<TaskModel>>) {
         val call = taskRemoteService.listNext()
-        listCall(call, listener)
+        executeCall(call, listener)
     }
 
     fun listOverdue(listener: ApiListener<List<TaskModel>>) {
         val call = taskRemoteService.listOverdue()
-        listCall(call, listener)
+        executeCall(call, listener)
     }
 
     fun create(taskModel: TaskModel, listener: ApiListener<Boolean>) {
@@ -36,48 +33,21 @@ class TaskRepository(val context: Context) : BaseRepository() {
             taskModel.dueDate,
             taskModel.complete
         )
-        call.enqueue(object : Callback<Boolean> {
-            override fun onResponse(call: Call<Boolean>, response: Response<Boolean>) {
-                handleSuccessResponse(response, listener)
-            }
-
-            override fun onFailure(call: Call<Boolean>, t: Throwable) {
-                handleFailureResponse(context, listener)
-            }
-
-        })
+        executeCall(call, listener)
     }
 
     fun delete(id: Int, listener: ApiListener<Boolean>) {
         val call = taskRemoteService.delete(id)
-        call.enqueue(object : Callback<Boolean> {
-            override fun onResponse(
-                call: Call<Boolean>,
-                response: Response<Boolean>
-            ) {
-                handleSuccessResponse(response, listener)
-            }
-
-            override fun onFailure(call: Call<Boolean>, t: Throwable) {
-                handleFailureResponse(context, listener)
-            }
-        })
+        executeCall(call, listener)
     }
 
-    private fun listCall(call: Call<List<TaskModel>>, listener: ApiListener<List<TaskModel>>) {
-        call.enqueue(object : Callback<List<TaskModel>> {
-            override fun onResponse(
-                call: Call<List<TaskModel>>,
-                response: Response<List<TaskModel>>
-            ) {
-                handleSuccessResponse(response, listener)
-            }
+    fun complete(id: Int, listener: ApiListener<Boolean>) {
+        val call = taskRemoteService.complete(id)
+        executeCall(call, listener)
+    }
 
-            override fun onFailure(call: Call<List<TaskModel>>, t: Throwable) {
-                handleFailureResponse(context, listener)
-            }
-
-        })
-
+    fun undo(id: Int, listener: ApiListener<Boolean>) {
+        val call = taskRemoteService.undo(id)
+        executeCall(call, listener)
     }
 }
